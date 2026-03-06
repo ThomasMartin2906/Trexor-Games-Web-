@@ -1,0 +1,81 @@
+{
+    "games": [
+        {
+            "id": "g1",
+            "title": "City Architect",
+            "category": "Simulation",
+            "genre": "URBAN SANDBOX \u00b7 STRATEGY",
+            "description": "Design, optimize, and stress-test a living city with dynamic traffic, power grids, and AI citizens.",
+            "badges": [
+                "SMOOTH CONTROLS"
+            ],
+            "footerBadge": "Best for Planners"
+        },
+        {
+            "id": "g2",
+            "title": "HyperDrive Racer",
+            "category": "E-Sports",
+            "genre": "DRIVING \u00b7 TIME TRIAL",
+            "description": "Feel precision handling on futuristic tracks with live telemetry overlays tuned for performance freaks.",
+            "badges": [
+                "PHYSICS+"
+            ],
+            "footerBadge": "Wheel-Friendly"
+        },
+        {
+            "id": "g3",
+            "title": "Arena Legends",
+            "category": "E-Sports",
+            "genre": "TEAM-BASED \u00b7 COMPETITIVE",
+            "description": "Draft heroes, outplay opponents, and climb the global ladder in a fast-paced 5v5 arena.",
+            "badges": [
+                "RANKED"
+            ],
+            "footerBadge": "Party Up"
+        },
+        {
+            "id": "g4",
+            "title": "Tactical Strike",
+            "category": "E-Sports",
+            "genre": "FPS \u00b7 5V5",
+            "description": "Sharpen your aim and utility usage in highly tactical rounds where every pixel and frame matters.",
+            "badges": [
+                "ULTRA LOW LATENCY"
+            ],
+            "footerBadge": "Clutch Moments"
+        },
+        {
+            "id": "g5",
+            "title": "Nightfall Asylum",
+            "category": "Horror",
+            "genre": "SINGLE-PLAYER \u00b7 PSYCHOLOGICAL",
+            "description": "Navigate an abandoned facility where every light flicker and echo is rendered in chilling detail.",
+            "badges": [
+                "RAY-TRACED SHADOWS"
+            ],
+            "footerBadge": "Headphones On"
+        },
+        {
+            "id": "g6",
+            "title": "Deep Space Echoes",
+            "category": "Horror",
+            "genre": "SCI-FI \u00b7 SURVIVAL",
+            "description": "Drift through a silent starship where something hunts in the vents and the UI flickers with warnings.",
+            "badges": [
+                "IMMERSIVE AUDIO"
+            ],
+            "footerBadge": "High Tension"
+        },
+        {
+            "id": "g8",
+            "title": "Circuit Clash",
+            "category": "E-Sports",
+            "genre": "ARCADE \u00b7 VERSUS",
+            "description": "Fast, electric matches perfect for warming up, practicing mechanics, or settling scores with friends.",
+            "badges": [
+                "SCRIM READY"
+            ]
+        }
+    ],
+    "messages": []
+}

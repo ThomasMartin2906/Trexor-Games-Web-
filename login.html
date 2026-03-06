@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trexor Games | Authentication</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* CSS Variables - Matching Main Theme */
+        :root {
+            --bg-color: #09090b;
+            --bg-secondary: #18181b;
+            --accent-primary: #6366f1;
+            --accent-hover: #818cf8;
+            --text-main: #fafafa;
+            --text-secondary: #a1a1aa;
+            --border-color: rgba(255, 255, 255, 0.08);
+            
+            --font-headings: 'Plus Jakarta Sans', sans-serif;
+            --font-body: 'Inter', sans-serif;
+            --transition-speed: 0.3s;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: var(--font-body);
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Ambient Backgrounds */
+        body::before {
+            content: '';
+            position: absolute;
+            top: -20%;
+            left: -10%;
+            width: 60%;
+            height: 60%;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, rgba(9, 9, 11, 0) 70%);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        body::after {
+            content: '';
+            position: absolute;
+            bottom: -20%;
+            right: -10%;
+            width: 50%;
+            height: 50%;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.1) 0%, rgba(9, 9, 11, 0) 70%);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* Container */
+        .auth-container {
+            width: 100%;
+            max-width: 440px;
+            padding: 40px;
+            background: linear-gradient(145deg, rgba(24, 24, 27, 0.6), rgba(9, 9, 11, 0.8));
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Header / Logo */
+        .auth-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .logo-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, #818cf8, #4f46e5);
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(99, 102, 241, 0.4);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .logo-icon::after {
+            content: '';
+            width: 18px;
+            height: 18px;
+            border: 3px solid white;
+            border-top-color: transparent;
+            border-radius: 50%;
+            transform: rotate(-45deg);
+        }
+
+        .auth-header h1 {
+            font-family: var(--font-headings);
+            font-size: 1.75rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            margin-bottom: 8px;
+            background: linear-gradient(to right, #ffffff, #a1a1aa);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .auth-header p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        /* Toggle System */
+        .auth-tabs {
+            display: flex;
+            background: rgba(9, 9, 11, 0.6);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 6px;
+            margin-bottom: 30px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 10px 0;
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            font-family: var(--font-headings);
+            font-weight: 600;
+            font-size: 0.9rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .tab-btn.active {
+            background: var(--bg-secondary);
+            color: var(--text-main);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        /* Forms */
+        .auth-form {
+            display: none;
+            animation: fadeIn 0.4s ease forwards;
+        }
+        
+        .auth-form.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .form-control {
+            width: 100%;
+            background: rgba(9, 9, 11, 0.5);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 14px 16px;
+            border-radius: 10px;
+            font-family: var(--font-body);
+            font-size: 1rem;
+            transition: all 0.2s;
+            outline: none;
+        }
+
+        .form-control:focus {
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 1px var(--accent-primary), 0 0 15px rgba(99, 102, 241, 0.1);
+            background: rgba(9, 9, 11, 0.8);
+        }
+
+        /* Button */
+        .btn-submit {
+            width: 100%;
+            background: var(--text-main);
+            color: var(--bg-color);
+            border: none;
+            padding: 14px;
+            border-radius: 10px;
+            font-family: var(--font-headings);
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            margin-top: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-submit:hover {
+            background: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 6px 20px rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+        }
+
+        /* Status Messages */
+        .auth-msg {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 0.9rem;
+            font-weight: 500;
+            padding: 10px;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .msg-error {
+            background: rgba(239, 68, 68, 0.1);
+            color: #f87171;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+
+        .msg-success {
+            background: rgba(16, 185, 129, 0.1);
+            color: #34d399;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="auth-container">
+        <div class="auth-header">
+            <div class="logo-icon"></div>
+            <h1>Welcome Back</h1>
+            <p id="header-desc">Enter your credentials to access the gallery.</p>
+        </div>
+
+        <div class="auth-tabs">
+            <button class="tab-btn active" onclick="switchTab('login')">Sign In</button>
+            <button class="tab-btn" onclick="switchTab('signup')">Sign Up</button>
+        </div>
+
+        <!-- Login Form -->
+        <form id="loginForm" class="auth-form active">
+            <div class="form-group">
+                <label for="l-email">Email Address</label>
+                <input type="email" id="l-email" class="form-control" placeholder="jack@example.com" required>
+            </div>
+            <div class="form-group">
+                <label for="l-password">Password</label>
+                <input type="password" id="l-password" class="form-control" placeholder="••••••••" required>
+            </div>
+            <button type="submit" class="btn-submit">Sign In to Dashboard</button>
+        </form>
+
+        <!-- Signup Form -->
+        <form id="signupForm" class="auth-form">
+            <div class="form-group">
+                <label for="s-username">Username</label>
+                <input type="text" id="s-username" class="form-control" placeholder="GamerTag" required>
+            </div>
+            <div class="form-group">
+                <label for="s-email">Email Address</label>
+                <input type="email" id="s-email" class="form-control" placeholder="jack@example.com" required>
+            </div>
+            <div class="form-group">
+                <label for="s-password">Password</label>
+                <input type="password" id="s-password" class="form-control" placeholder="Create a strong password" required>
+            </div>
+            <button type="submit" class="btn-submit">Create Account</button>
+        </form>
+
+        <div id="authMsg" class="auth-msg"></div>
+    </div>
+
+    <script>
+        // Tab Switching Logic
+        function switchTab(tab) {
+            const loginForm = document.getElementById('loginForm');
+            const signupForm = document.getElementById('signupForm');
+            const btns = document.querySelectorAll('.tab-btn');
+            const headerDesc = document.getElementById('header-desc');
+            const authMsg = document.getElementById('authMsg');
+
+            authMsg.style.display = 'none';
+
+            btns.forEach(btn => btn.classList.remove('active'));
+
+            if (tab === 'login') {
+                loginForm.classList.add('active');
+                signupForm.classList.remove('active');
+                btns[0].classList.add('active');
+                document.querySelector('h1').textContent = 'Welcome Back';
+                headerDesc.textContent = 'Enter your credentials to access the gallery.';
+            } else {
+                signupForm.classList.add('active');
+                loginForm.classList.remove('active');
+                btns[1].classList.add('active');
+                document.querySelector('h1').textContent = 'Create Account';
+                headerDesc.textContent = 'Join Trexor Games today and explore our catalog.';
+            }
+        }
+
+        // Display Message Helper
+        function showMsg(message, isError) {
+            const msgEl = document.getElementById('authMsg');
+            msgEl.textContent = message;
+            msgEl.className = 'auth-msg ' + (isError ? 'msg-error' : 'msg-success');
+            msgEl.style.display = 'block';
+        }
+
+        // Login Handler
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = e.target.querySelector('.btn-submit');
+            const originalText = btn.textContent;
+            btn.textContent = 'Authenticating...';
+
+            try {
+                const res = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email: document.getElementById('l-email').value,
+                        password: document.getElementById('l-password').value
+                    })
+                });
+
+                const data = await res.json();
+                if (res.ok) {
+                    showMsg('Login successful! Redirecting...', false);
+                    setTimeout(() => window.location.href = '/home', 1000);
+                } else {
+                    showMsg(data.error || 'Login failed', true);
+                }
+            } catch (err) {
+                showMsg('Network error. Is the server running?', true);
+            } finally {
+                btn.textContent = originalText;
+            }
+        });
+
+        // Signup Handler
+        document.getElementById('signupForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = e.target.querySelector('.btn-submit');
+            const originalText = btn.textContent;
+            btn.textContent = 'Creating...';
+
+            try {
+                const res = await fetch('/api/auth/signup', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        username: document.getElementById('s-username').value,
+                        email: document.getElementById('s-email').value,
+                        password: document.getElementById('s-password').value
+                    })
+                });
+
+                const data = await res.json();
+                if (res.ok) {
+                    showMsg('Account created successfully! Please sign in.', false);
+                    document.getElementById('signupForm').reset();
+                    setTimeout(() => switchTab('login'), 2000);
+                } else {
+                    showMsg(data.error || 'Signup failed', true);
+                }
+            } catch (err) {
+                showMsg('Network error. Is the server running?', true);
+            } finally {
+                btn.textContent = originalText;
+            }
+        });
+    </script>
+</body>
+</html>
