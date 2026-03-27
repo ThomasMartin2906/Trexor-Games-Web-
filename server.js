@@ -59,17 +59,6 @@ const server = http.createServer(async (req, res) => {
 
     // Route 1: Serve main HTML, CSS, and JS client side
     if (req.url === '/' && req.method === 'GET') {
-        fs.readFile(path.join(__dirname, 'login.html'), 'utf8', (err, data) => {
-            if (err) {
-                res.writeHead(500, { 'Content-Type': 'text/plain' });
-                res.end('Internal Server Error');
-                return;
-            }
-            res.writeHead(200, { 'Content-Type': 'text/html' });
-            res.end(data);
-        });
-    }
-    else if (req.url === '/home' && req.method === 'GET') {
         fs.readFile(path.join(__dirname, 'index.html'), 'utf8', (err, data) => {
             if (err) {
                 res.writeHead(500, { 'Content-Type': 'text/plain' });
@@ -212,67 +201,6 @@ const server = http.createServer(async (req, res) => {
                 console.error("Contact form error:", err);
                 res.writeHead(500, { 'Content-Type': 'application/json' });
                 res.end(JSON.stringify({ error: 'Failed to save contact message' }));
-            }
-        });
-    }
-
-    // Route 4: Authentication (Signup)
-    else if (req.url === '/api/auth/signup' && req.method === 'POST') {
-        let body = '';
-        req.on('data', chunk => { body += chunk.toString(); });
-        req.on('end', async () => {
-            try {
-                const { username, email, password } = JSON.parse(body);
-                // Basic insert without hashing for simplicity in this lab
-                const [result] = await db.query(
-                    'INSERT INTO users (username, email, password) VALUES (?, ?, ?)',
-                    [username, email, password]
-                );
-                res.writeHead(201, { 'Content-Type': 'application/json' });
-                res.end(JSON.stringify({ success: true, message: 'User created.' }));
-            } catch (err) {
-                console.error("Signup error:", err);
-                res.writeHead(400, { 'Content-Type': 'application/json' });
-                res.end(JSON.stringify({ error: err.code === 'ER_DUP_ENTRY' ? 'Username or Email already exists' : 'Failed to sign up' }));
-            }
-        });
-    }
-    // Route 5: Authentication (Login)
-    else if (req.url === '/api/auth/login' && req.method === 'POST') {
-        let body = '';
-        req.on('data', chunk => { body += chunk.toString(); });
-        req.on('end', async () => {
-            try {
-                const { email, password } = JSON.parse(body);
-
-                // First, check if the email exists
-                const [emailRows] = await db.query(
-                    'SELECT id, username, password FROM users WHERE email = ?',
-                    [email]
-                );
-
-                if (emailRows.length === 0) {
-                    // User not found
-                    res.writeHead(404, { 'Content-Type': 'application/json' });
-                    res.end(JSON.stringify({ error: 'User not found' }));
-                    return;
-                }
-
-                // Email exists, verify password
-                const user = emailRows[0];
-                if (user.password === password) {
-                    // Password matches
-                    res.writeHead(200, { 'Content-Type': 'application/json' });
-                    res.end(JSON.stringify({ success: true, user: { id: user.id, username: user.username } }));
-                } else {
-                    // Invalid password
-                    res.writeHead(401, { 'Content-Type': 'application/json' });
-                    res.end(JSON.stringify({ error: 'Invalid password' }));
-                }
-            } catch (err) {
-                console.error("Login error:", err);
-                res.writeHead(500, { 'Content-Type': 'application/json' });
-                res.end(JSON.stringify({ error: 'Internal server error' }));
             }
         });
     }
